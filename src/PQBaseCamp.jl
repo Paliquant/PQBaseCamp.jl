@@ -5,6 +5,7 @@ include("Include.jl")
 
 # functions/types that we are going to return -
 export Δ
+export 𝒟
 
 # export models -
 export AbstractBaseCampComputation

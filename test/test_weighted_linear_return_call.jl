@@ -33,7 +33,4 @@ df = CSV.read(path_to_data_file, DataFrame)
 model = LinearReturnComputionModel()
 model.data = df
 model.map = :timestamp => :close
-Δ_table = Δ(model; weights = ew)
-
-# no weights -
-Δ_table_no_w = Δ(model)
+Δ_table = Δ(model)
