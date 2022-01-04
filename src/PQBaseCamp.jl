@@ -4,7 +4,7 @@ module PQBaseCamp
 include("Include.jl")
 
 # functions/types that we are going to return -
-export δ
+export Δ
 
 # export models -
 export AbstractBaseCampComputation
