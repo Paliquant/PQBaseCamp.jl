@@ -7,11 +7,11 @@ function ew(data::DataFrame, map::Pair{Symbol,Symbol})::Array{Float64,1}
 
     # initialize -
     ω_array = Array{Float64,1}()
-    α = 0.05
+    α = 0.001
 
     # how many rows do we have?
     (number_of_rows, _) = size(data)
-    for row_index ∈ 1:number_of_rows
+    for row_index ∈ 1:(number_of_rows - 1)
 
         value = (1 - α)^(row_index - 1)
         push!(ω_array, value)
@@ -23,7 +23,7 @@ function ew(data::DataFrame, map::Pair{Symbol,Symbol})::Array{Float64,1}
 end
 
 # load up a sample data file -
-path_to_data_file = "$(pwd())/test/data/SPY.csv"
+path_to_data_file = "$(pwd())/test/data/MRNA.csv"
 df = CSV.read(path_to_data_file, DataFrame)
 
 # what is the w?
