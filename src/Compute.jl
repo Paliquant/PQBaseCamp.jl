@@ -133,3 +133,26 @@ function 𝒟(distribution::Type{T}, data::DataFrame,
     # do the fit -
     return fit(distribution, data_array)
 end
+
+function 𝒫(compare::Function, samples::Array{Float64})::Float64
+
+    # initialize -
+    number_of_samples = length(samples)
+    tmp_array = BitArray(undef, (number_of_samples, 1))
+
+    # main -
+    for sample_index ∈ 1:number_of_samples
+
+        # get the sample price -
+        sample_price = samples[sample_index]
+
+        # check: which is larger, sample or target price?
+        compare(sample_price) ? tmp_array[sample_index] = 1 : tmp_array[sample_index] = 0
+    end
+
+    # sum the tmp_array -
+    number_of_larger_values = sum(tmp_array)
+
+    # compute the probability -
+    return (number_of_larger_values / number_of_samples)
+end
