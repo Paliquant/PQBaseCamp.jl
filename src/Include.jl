@@ -9,6 +9,7 @@ using Distributions
 using Dates
 using Statistics
 using StatsPlots
+using LinearAlgebra
 
 
 # load my codes -

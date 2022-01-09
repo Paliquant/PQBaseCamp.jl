@@ -3,6 +3,7 @@ abstract type AbstractBaseCampComputation end
 mutable struct LogReturnComputionModel <: AbstractBaseCampComputation
 
     # data -
+    ticker::String
     data::DataFrame
     map::Pair{Symbol,Symbol}
     from::Union{Date,Nothing}
@@ -15,6 +16,7 @@ end
 mutable struct LinearReturnComputionModel <: AbstractBaseCampComputation
 
     # data -
+    ticker::String
     data::DataFrame
     map::Pair{Symbol,Symbol}
     from::Union{Date,Nothing}

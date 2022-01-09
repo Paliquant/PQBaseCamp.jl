@@ -7,6 +7,8 @@ include("Include.jl")
 export Δ
 export 𝒟
 export 𝒫
+export β
+export cov
 
 # export models -
 export AbstractBaseCampComputation

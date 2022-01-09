@@ -31,6 +31,7 @@ df = CSV.read(path_to_data_file, DataFrame)
 
 # build a computation model -
 model = LinearReturnComputionModel()
+model.ticker = "SPY"
 model.data = df
 model.map = :timestamp => :close
 Δ_table = Δ(model)
