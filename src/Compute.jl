@@ -32,7 +32,7 @@ function Δ(model::LogReturnComputionModel; multiplier::Float64 = 1.0)::DataFram
         today_close_price = data[row_index, map.second]
 
         # compute the diff -
-        δ_value = multiplier*log(today_close_price / yesterday_close_price)
+        δ_value = multiplier * log(today_close_price / yesterday_close_price)
 
         # push! -
         push!(return_table, (tmp_date, yesterday_close_price, today_close_price, δ_value, 0.0, 0.0))
@@ -95,7 +95,7 @@ function Δ(model::LinearReturnComputionModel; multiplier::Float64 = 1.0)::DataF
         today_close_price = data[row_index, map.second]
 
         # compute the diff -
-        δ_value = multiplier*((today_close_price - yesterday_close_price) / (yesterday_close_price))
+        δ_value = multiplier * ((today_close_price - yesterday_close_price) / (yesterday_close_price))
 
         # push! -
         push!(return_table, (tmp_date, yesterday_close_price, today_close_price, δ_value, 0.0, 0.0))
@@ -124,8 +124,8 @@ function Δ(model::LinearReturnComputionModel; multiplier::Float64 = 1.0)::DataF
     return return_table
 end
 
-function Δ(models::Array{T,1}; 
-    multiplier::Float64 = 1.0)::Dict{String,DataFrame} where T <: AbstractBaseCampComputation
+function Δ(models::Array{T,1};
+    multiplier::Float64 = 1.0)::Dict{String,DataFrame} where {T<:AbstractBaseCampComputation}
 
 
     # initialize -
@@ -138,14 +138,14 @@ function Δ(models::Array{T,1};
     end
 
     # return -
-    return Δ_dictionary;
+    return Δ_dictionary
 end
 
-function 𝒟(distribution::Type{T}, data::DataFrame, 
-    colkey::Symbol)::UnivariateDistribution where T <: ContinuousUnivariateDistribution
+function 𝒟(distribution::Type{T}, data::DataFrame,
+    colkey::Symbol)::UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
 
     # get the array of data from the data frame -
-    data_array = data[!,colkey]
+    data_array = data[!, colkey]
 
     # do the fit -
     return fit(distribution, data_array)
@@ -187,41 +187,47 @@ function cov(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol
 
     # populate the price return array -
     for col_index ∈ 1:number_of_tickers
-        
+
         # get the ticker -
         ticker_symbol = tickers[col_index]
-        
+
         # get data -
         df = data[ticker_symbol]
-        
+
         for row_index ∈ 1:number_of_rows
-            price_return_array[row_index, col_index] = df[row_index,key]
+            price_return_array[row_index, col_index] = df[row_index, key]
         end
     end
-        
+
     # compute the cov array -
     return Statistics.cov(price_return_array)
 end
 
-function β(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol = :Δ)::Array{Float64,2}
+function β(tickers::Array{String,1}, data::Dict{String,DataFrame};
+    key::Symbol = :Δ, base::String = "SPY")::Array{Float64,2}
 
     # initialize -
     number_of_tickers = length(tickers)
-    β_array = Array{Float64,2}(undef, number_of_tickers, number_of_tickers)
+    β_array = Array{Float64,1}(undef, number_of_tickers)
 
     # compute the covariance -
     covm = cov(tickers, data; key = key)
 
-    # the diagonal elements of the β_array are = 1
-    for row_index ∈ 1:number_of_tickers
-        for col_index ∈ 1:number_of_tickers
-            if (row_index == col_index)
-                β_array[row_index,col_index] = 1.0
-            end
-        end
-    end
+    # what index is the base ticker in the tickers array?
+    index_base = indexin(base, tickers)
 
-    
+    # get the variance of the base ticker -
+    var_base_ticker = covm(index_base, index_base)
+
+    # compute β -
+    for ticker_index ∈ 1:number_of_tickers
+
+        # compute the β_value -
+        β_value = covm(ticker_index, index_base) * (1 / var_base_ticker)
+
+        # capture -
+        β_array[ticker_index] = β_value
+    end
 
     # return -
     return β_array
