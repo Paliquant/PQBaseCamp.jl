@@ -8,7 +8,7 @@ export Δ
 export 𝒟
 export 𝒫
 export β
-export cov
+export covariance
 
 # export models -
 export AbstractBaseCampComputation

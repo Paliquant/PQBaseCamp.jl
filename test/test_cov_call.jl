@@ -32,4 +32,4 @@ end
 price_retrun_dictionary = Δ(compute_model_array; multiplier = 100.0)
 
 # compute the cov array -
-covm = cov(ticker_array, price_retrun_dictionary)
+covm = covariance(ticker_array, price_retrun_dictionary)

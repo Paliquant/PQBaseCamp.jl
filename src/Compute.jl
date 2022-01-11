@@ -174,7 +174,7 @@ function 𝒫(compare::Function, samples::Array{Float64})::Float64
     return (number_of_larger_values / number_of_samples)
 end
 
-function cov(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol = :Δ)::Array{Float64,2}
+function covariance(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol = :Δ)::Array{Float64,2}
 
     # build a return matrix -
     number_of_tickers = length(tickers)
@@ -204,26 +204,25 @@ function cov(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol
 end
 
 function β(tickers::Array{String,1}, data::Dict{String,DataFrame};
-    key::Symbol = :Δ, base::String = "SPY")::Array{Float64,2}
+    key::Symbol = :Δ, base::String = "SPY")::Array{Float64,1}
 
     # initialize -
     number_of_tickers = length(tickers)
     β_array = Array{Float64,1}(undef, number_of_tickers)
 
-    # compute the covariance -
-    covm = cov(tickers, data; key = key)
-
-    # what index is the base ticker in the tickers array?
-    index_base = indexin(base, tickers)
-
-    # get the variance of the base ticker -
-    var_base_ticker = covm(index_base, index_base)
+    # get the return data for the base -
+    base_return_array = data[base][!,key]
+    var_base = var(base_return_array)
 
     # compute β -
     for ticker_index ∈ 1:number_of_tickers
 
+        # what ticker?
+        ticker_value = tickers[ticker_index]
+        return_array_ticker = data[ticker_value][!,key]
+
         # compute the β_value -
-        β_value = covm(ticker_index, index_base) * (1 / var_base_ticker)
+        β_value = cov(return_array_ticker, base_return_array) * (1 / var_base)
 
         # capture -
         β_array[ticker_index] = β_value
