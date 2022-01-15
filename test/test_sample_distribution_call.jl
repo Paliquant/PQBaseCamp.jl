@@ -1,9 +1,10 @@
 using PQBaseCamp
 using DataFrames
 using CSV
+using Distributions
 
 # compute array -
-compute_model_array = Array{LinearReturnComputionModel,1}()
+compute_model_array = Array{LogReturnComputionModel,1}()
 
 # ticker_array -
 ticker_array = [
@@ -18,7 +19,7 @@ for ticker ∈ ticker_array
     df = CSV.read(path_to_data_file, DataFrame)
 
     # compute -
-    model = LinearReturnComputionModel()
+    model = LogReturnComputionModel()
     model.ticker = ticker
     model.data = df
     model.map = :timestamp => :close
@@ -29,8 +30,7 @@ end
 
 # compute the cov array -
 # first: compute the dictionary of returns -
-price_retrun_dictionary = Δ(compute_model_array; multiplier = 100.0)
-covm = covariance(ticker_array, price_retrun_dictionary)
+price_retrun_dictionary = Δ(compute_model_array; multiplier = 1.0)
 
-# compute the β_array -
-β_array = β(ticker_array, price_retrun_dictionary)
+# compute the return distribution dictionary -
+dd = 𝒟(Laplace, price_retrun_dictionary)

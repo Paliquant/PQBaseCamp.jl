@@ -9,6 +9,7 @@ export 𝒟
 export 𝒫
 export β
 export covariance
+export sample
 
 # export models -
 export AbstractBaseCampComputation

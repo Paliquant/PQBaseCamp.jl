@@ -141,14 +141,37 @@ function Δ(models::Array{T,1};
     return Δ_dictionary
 end
 
-function 𝒟(distribution::Type{T}, data::DataFrame,
-    colkey::Symbol)::UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
+function 𝒟(distribution::Type{T}, data::DataFrame; 
+    colkey::Symbol = :Δ)::UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
 
     # get the array of data from the data frame -
     data_array = data[!, colkey]
 
     # do the fit -
     return fit(distribution, data_array)
+end
+
+function 𝒟(distribution::Type{T}, data::Dict{String, DataFrame}; 
+    colkey::Symbol = :Δ)::Dict{String, T} where {T<:ContinuousUnivariateDistribution}
+
+    # initialize -
+    distribution_dictionary = Dict{String, T}()
+
+    # call the single 𝒟 -
+    for (key,value) ∈ data
+        
+        # get the array of data from the data frame -
+        data_array = value[!, colkey]
+    
+        # fit a distribution -
+        d = fit(distribution, data_array);
+
+        # capture -
+        distribution_dictionary[key] = d;
+    end
+    
+    # return data -
+    return distribution_dictionary
 end
 
 function 𝒫(compare::Function, samples::Array{Float64})::Float64
@@ -232,3 +255,44 @@ function β(tickers::Array{String,1}, data::Dict{String,DataFrame};
     return β_array
 end
 
+function sample(model::Distribution, number_of_steps::Int64;
+    number_of_sample_paths = 100, number_of_strata = 1)::Array{Float64,2}
+
+    # initialize -
+    number_of_steps = number_of_steps + 1
+    sample_return_data = Array{Array{Float64,1},1}(undef, number_of_steps)
+	
+	# Let's use stratefied sampling to generate the return samples -
+    for time_step_index ∈ 1:number_of_steps
+
+		tmp_vector = Array{Float64,1}()
+                
+        # sample the strata ...
+        for strata_index ∈ 1:number_of_strata
+            
+            # compute a number_of_sample_paths draws from tis strata?
+            for _ ∈ 1:number_of_sample_paths
+                
+                # compute V -
+                V₁ = (strata_index - 1)/number_of_strata + rand()/number_of_strata
+                V₂ = (strata_index - 1)/number_of_strata + (1-rand())/number_of_strata
+
+                # compute the quantile for this V -
+                q₁ = quantile(model, V₁)
+                q₂ = quantile(model, V₂)
+
+                # grab this value -
+                push!(tmp_vector, q₁)
+                push!(tmp_vector, q₂)
+            end
+        end
+		
+        sample_return_data[time_step_index] = tmp_vector
+    end
+
+    # crunch the data together -
+    sample_return_array = transpose(hcat(sample_return_data...))
+
+    # return -
+    return sample_return_array
+end
