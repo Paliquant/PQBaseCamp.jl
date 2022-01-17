@@ -46,7 +46,7 @@ mutable struct LogReturnComputationModel <: AbstractBaseCampComputation
 end
 ```
 
-#### Fit probability density functions to price return data
+#### Fitting probability density functions to price return data
 Sometimes we may want to fit a distribution to historical price returns e.g., when constructing random
 walk models for a particular asset or basket of assets. To facilitate this, `PQBaseCamp.jl`  encodes the
 `𝒟` function(s):
@@ -57,7 +57,19 @@ walk models for a particular asset or basket of assets. To facilitate this, `PQB
 ```
 
 where [ContinuousUnivariateDistribution](https://juliastats.org/Distributions.jl/stable/univariate/#Continuous-Distributions) is any type of continuous univariate probability density function
-encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package
+encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package.
+The optional `colkey` parameter holds the symbol of the column in the `data` [DataFrame](https://dataframes.juliadata.org/stable/) corresponding to the log or simple return values.
+
+In cases where we have many assets that we are interested in, we export a broadcast version of the 
+`𝒟` function:
+
+```julia
+𝒟(distribution::Type{T}, data::Dict{String, DataFrame}; 
+    colkey::Symbol = :Δ) --> Dict{String, T} where {T<:ContinuousUnivariateDistribution}
+```
+
+where `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) with 
+ticker symbols as keys pointing to return DataFrames. This method returns a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding the distribution models (ticker symbols as keys).
 
 
 ## Disclaimer and Risks
