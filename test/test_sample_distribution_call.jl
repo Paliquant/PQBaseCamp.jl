@@ -36,4 +36,4 @@ price_retrun_dictionary = Δ(compute_model_array; multiplier = 1.0)
 dd = 𝒟(Laplace, price_retrun_dictionary)
 
 # sample this distribution -
-sample_array = sample(dd,100);
+sample_array = sample(dd, 100);
