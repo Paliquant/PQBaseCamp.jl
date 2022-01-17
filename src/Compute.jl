@@ -141,6 +141,32 @@ function Δ(models::Array{T,1};
     return Δ_dictionary
 end
 
+function 𝒟(distribution::Type{T}, ticker_symbol_array::Array{String,1}, data::Dict{String, DataFrame}; 
+    colkey::Symbol = :Δ)::ContinuousMultivariateDistribution where {T <: ContinuousMultivariateDistribution}
+
+    # how many keys and rows do we have?
+    number_of_ticker_symbols = length(ticker_symbol_array)
+    number_of_rows = length(data[first(ticker_symbol_array)][!,colkey])
+
+    # initialize -
+    tmp_array = Array{Float64,2}(undef, number_of_rows, number_of_ticker_symbols)
+
+    # build the data array -
+    for (ticker_index, ticker_symbol) ∈ enumerate(ticker_symbol_array)
+        
+        # grab the data for this ticker -
+        tmp_data_col = data[ticker_symbol][!,colkey]
+
+        # copy into the tmp array -
+        for row_index ∈ 1:number_of_rows
+            tmp_array[row_index, ticker_index] = tmp_data_col[row_index]
+        end
+    end
+
+    # fit the distribution -
+    return fit(distribution, transpose(tmp_array))
+end
+
 function 𝒟(distribution::Type{T}, data::DataFrame; 
     colkey::Symbol = :Δ)::UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
 
@@ -197,7 +223,8 @@ function 𝒫(compare::Function, samples::Array{Float64})::Float64
     return (number_of_larger_values / number_of_samples)
 end
 
-function covariance(tickers::Array{String,1}, data::Dict{String,DataFrame}; key::Symbol = :Δ)::Array{Float64,2}
+function covariance(tickers::Array{String,1}, data::Dict{String,DataFrame}; 
+    key::Symbol = :Δ)::Array{Float64,2}
 
     # build a return matrix -
     number_of_tickers = length(tickers)
@@ -255,8 +282,8 @@ function β(tickers::Array{String,1}, data::Dict{String,DataFrame};
     return β_array
 end
 
-function sample(model::Distribution, number_of_steps::Int64;
-    number_of_sample_paths = 100, number_of_strata = 1)::Array{Float64,2}
+function sample(model::T, number_of_steps::Int64;
+    number_of_sample_paths = 100, number_of_strata = 1)::Array{Float64,2} where {T<:ContinuousUnivariateDistribution} 
 
     # initialize -
     number_of_steps = number_of_steps + 1
@@ -295,4 +322,25 @@ function sample(model::Distribution, number_of_steps::Int64;
 
     # return -
     return sample_return_array
+end
+
+function sample(models::Dict{String,T}, number_of_steps::Int64; 
+    number_of_sample_paths = 100, number_of_strata = 1)::Dict{String,Array{Float64,2}} where {T<:ContinuousUnivariateDistribution} 
+
+    # initialize -
+    sample_dictionary = Dict{String,Array{Float64,2}}()
+
+    # compute -
+    for (ticker_symbol, model) ∈ models
+        
+        # sample this model -
+        tmp_array = sample(model, number_of_steps; 
+            number_of_sample_paths = number_of_sample_paths, number_of_strata = number_of_strata)
+
+        # store the samples -
+        sample_dictionary[ticker_symbol] = tmp_array
+    end
+
+    # return -
+    return sample_dictionary
 end

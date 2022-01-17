@@ -11,6 +11,8 @@ using Statistics
 using StatsPlots
 using LinearAlgebra
 
+# let's extend the sample method in distribution -
+import Distributions.sample
 
 # load my codes -
 include(joinpath(_PATH_TO_SRC, "Types.jl"))

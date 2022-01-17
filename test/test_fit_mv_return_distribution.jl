@@ -30,10 +30,7 @@ end
 
 # compute the cov array -
 # first: compute the dictionary of returns -
-price_retrun_dictionary = Δ(compute_model_array; multiplier = 1.0)
+price_retrun_dictionary = Δ(compute_model_array; multiplier = 100.0)
 
 # compute the return distribution dictionary -
-dd = 𝒟(Laplace, price_retrun_dictionary)
-
-# sample this distribution -
-sample_array = sample(dd,100);
+dd = 𝒟(MvNormal, ticker_array, price_retrun_dictionary)
