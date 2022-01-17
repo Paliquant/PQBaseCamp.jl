@@ -15,7 +15,7 @@ To use `PQBaseCamp.jl` in your projects, issue the command:
 ## Quick start guide
 `PQBaseCamp.jl` exports six functions for doing some basic computation on the financial data from [Polygon.io](https://polygon.io).
 
-### Compute log or linear price returns
+#### Compute log or linear price returns
 The `Δ` function (and its associated methods) is used to compute either the log or simple (linear) return from price data encoded in a [DataFrame](https://dataframes.juliadata.org/stable/):
 
 
@@ -45,6 +45,20 @@ mutable struct LogReturnComputationModel <: AbstractBaseCampComputation
     LogReturnComputationModel() = new()
 end
 ```
+
+#### Fit probability density functions to price return data
+Sometimes we may want to fit a distribution to historical price returns e.g., when constructing random
+walk models for a particular asset or basket of assets. To facilitate this, `PQBaseCamp.jl`  encodes the
+`𝒟` function(s):
+
+```julia
+𝒟(distribution::Type{T}, data::DataFrame; 
+    colkey::Symbol = :Δ) --> UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
+```
+
+where [ContinuousUnivariateDistribution](https://juliastats.org/Distributions.jl/stable/univariate/#Continuous-Distributions) is any type of continuous univariate probability density function
+encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package
+
 
 ## Disclaimer and Risks
 [Paliquant](https://www.paliquant.com) software and `PQBaseCamp.jl` is offered solely for training and  informational purposes. No offer or solicitation to buy or sell securities or securities derivative products of any kind, or any type of investment or trading advice or strategy,  is made, given or in any manner endorsed by [Paliquant](https://www.paliquant.com). 
