@@ -30,7 +30,7 @@ df = CSV.read(path_to_data_file, DataFrame)
 ω_array = ew(df, :timestamp => :close)
 
 # build a computation model -
-model = LogReturnComputionModel()
+model = LogReturnComputationModel()
 model.ticker = "MRNA"
 model.data = df
 model.map = :timestamp => :close

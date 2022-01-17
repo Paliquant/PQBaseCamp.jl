@@ -13,7 +13,7 @@ export sample
 
 # export models -
 export AbstractBaseCampComputation
-export LogReturnComputionModel
-export LinearReturnComputionModel
+export LogReturnComputationModel
+export LinearReturnComputationModel
 
 end # module

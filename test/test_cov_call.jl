@@ -3,7 +3,7 @@ using DataFrames
 using CSV
 
 # compute array -
-compute_model_array = Array{LogReturnComputionModel,1}()
+compute_model_array = Array{LogReturnComputationModel,1}()
 
 # ticker_array -
 ticker_array = [
@@ -18,7 +18,7 @@ for ticker ∈ ticker_array
     df = CSV.read(path_to_data_file, DataFrame)
 
     # compute -
-    model = LogReturnComputionModel()
+    model = LogReturnComputationModel()
     model.ticker = ticker
     model.data = df
     model.map = :timestamp => :close

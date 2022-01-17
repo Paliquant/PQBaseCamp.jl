@@ -1,4 +1,4 @@
-function Δ(model::LogReturnComputionModel; multiplier::Float64 = 1.0)::DataFrame
+function Δ(model::LogReturnComputationModel; multiplier::Float64 = 1.0)::DataFrame
 
     # get stuff from the computational model -
     raw_data = model.data
@@ -61,7 +61,7 @@ function Δ(model::LogReturnComputionModel; multiplier::Float64 = 1.0)::DataFram
     return return_table
 end
 
-function Δ(model::LinearReturnComputionModel; multiplier::Float64 = 1.0)::DataFrame
+function Δ(model::LinearReturnComputationModel; multiplier::Float64 = 1.0)::DataFrame
 
     # get stuff from the computational model -
     raw_data = model.data

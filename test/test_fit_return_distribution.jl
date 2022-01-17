@@ -8,7 +8,7 @@ path_to_data_file = "$(pwd())/test/data/SPY.csv"
 df = CSV.read(path_to_data_file, DataFrame)
 
 # build a computation model -
-model = LogReturnComputionModel()
+model = LogReturnComputationModel()
 model.ticker = "SPY"
 model.data = df
 model.map = :timestamp => :close

@@ -1,6 +1,6 @@
 abstract type AbstractBaseCampComputation end
 
-mutable struct LogReturnComputionModel <: AbstractBaseCampComputation
+mutable struct LogReturnComputationModel <: AbstractBaseCampComputation
 
     # data -
     ticker::String
@@ -10,10 +10,10 @@ mutable struct LogReturnComputionModel <: AbstractBaseCampComputation
     to::Union{Date,Nothing}
 
     # constructor -
-    LogReturnComputionModel() = new()
+    LogReturnComputationModel() = new()
 end
 
-mutable struct LinearReturnComputionModel <: AbstractBaseCampComputation
+mutable struct LinearReturnComputationModel <: AbstractBaseCampComputation
 
     # data -
     ticker::String
@@ -23,5 +23,5 @@ mutable struct LinearReturnComputionModel <: AbstractBaseCampComputation
     to::Union{Date,Nothing}
 
     # constructor -
-    LinearReturnComputionModel() = new()
+    LinearReturnComputationModel() = new()
 end
