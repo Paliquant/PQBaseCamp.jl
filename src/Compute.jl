@@ -177,8 +177,25 @@ function 𝒟(distribution::Type{T}, data::DataFrame;
     return fit(distribution, data_array)
 end
 
+function 𝒟(distribution::Type{T}, data::DataFrame, weights::Union{Nothing,Array{Float64,1}};
+    colkey::Symbol = :Δ)::UnivariateDistribution where {T<:ContinuousUnivariateDistribution}
+
+    # get the array of data from the data frame -
+    data_array = data[!, colkey]
+
+    # check: do we have a weight array?
+    if (isnothing(weights) == false)
+        
+        # do the fit w/weights -
+        return fit(distribution, data_array, weights)
+    else
+         # do the fit w/o weights -
+        return fit(distribution, data_array)
+    end
+end
+
 function 𝒟(distribution::Type{T}, data::Dict{String, DataFrame}; 
-    colkey::Symbol = :Δ)::Dict{String, T} where {T<:ContinuousUnivariateDistribution}
+    colkey::Symbol = :Δ, weights::Union{Nothing, Dict{String, Union{Nothing,Array{Float64,1}}}} = nothing)::Dict{String, T} where {T<:ContinuousUnivariateDistribution}
 
     # initialize -
     distribution_dictionary = Dict{String, T}()
@@ -188,10 +205,22 @@ function 𝒟(distribution::Type{T}, data::Dict{String, DataFrame};
         
         # get the array of data from the data frame -
         data_array = value[!, colkey]
-    
-        # fit a distribution -
-        d = fit(distribution, data_array);
 
+        # check: do we have weights?
+        d = nothing
+        if (isnothing(weights) == false && 
+            isnothing(weights[key]) == false)
+
+            # we have a weights -
+            w = weights[key]
+
+            # fit -
+            d = fit(distribution, data_array, w);
+        else
+            # fit a distribution -
+            d = fit(distribution, data_array);
+        end
+    
         # capture -
         distribution_dictionary[key] = d;
     end

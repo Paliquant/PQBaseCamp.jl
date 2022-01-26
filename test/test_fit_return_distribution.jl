@@ -15,4 +15,4 @@ model.map = :timestamp => :close
 Δ_table = Δ(model)
 
 # estimate a distribution from this data -
-D = 𝒟(Laplace, Δ_table, :Z)
+D = 𝒟(Laplace, Δ_table; colkey = :Δ)
