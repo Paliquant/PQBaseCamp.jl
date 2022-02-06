@@ -15,7 +15,7 @@ To use `PQBaseCamp.jl` in your projects, issue the command:
 ## Quick start guide
 `PQBaseCamp.jl` exports six functions for doing some basic computation on the financial data from [Polygon.io](https://polygon.io).
 
-#### Compute log or linear price returns
+### Compute log or linear price returns
 The `Δ` function (and its associated methods) is used to compute either the log or simple (linear) return from price data encoded in a [DataFrame](https://dataframes.juliadata.org/stable/):
 
 
@@ -46,7 +46,7 @@ mutable struct LogReturnComputationModel <: AbstractBaseCampComputation
 end
 ```
 
-#### Fitting probability density functions to price return data
+### Fitting probability density functions to price return data
 Sometimes we may want to fit a distribution to historical price returns e.g., when constructing random
 walk models for a particular asset or basket of assets. To facilitate this, `PQBaseCamp.jl`  encodes the
 `𝒟` function(s):
@@ -70,6 +70,20 @@ In cases where we have many assets that we are interested in, we export a broadc
 
 where `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) with 
 ticker symbols as keys pointing to return DataFrames. This method returns a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding the distribution models (ticker symbols as keys).
+
+### Computing beta
+[Beta](https://www.investopedia.com/ask/answers/070615/what-formula-calculating-beta.asp) is a measure of the volatility of an asset or portfolio relative to the overall market. Beta is defined as the covariance between an asset's return and the market return, dived by the variance of the market return:
+
+```julia
+β(tickers::Array{String,1}, data::Dict{String,DataFrame};
+    key::Symbol = :Δ, base::String = "SPY") --> Array{Float64,1}
+```
+
+The β(...) function returns an array
+of beta values (in the same order as the `tickers` array). The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional arguments `key` of type `Symbol` holds the column name for the return column in the `data` 
+[DataFrame](https://dataframes.juliadata.org/stable/), and `base` denotes the ticker symbol for
+the market, taken to be [SPY](https://www.google.com/finance/quote/SPY:NYSEARCA?sa=X&ved=2ahUKEwj04c6Oiuv1AhVPmeAKHW-wBG4Q3ecFegQIERAU) by default.
+
 
 
 ## Disclaimer and Risks
