@@ -1,5 +1,5 @@
 ## Introduction
-`PQBaseCamp.jl` is [Julia](https://julialang.org) package that encodes some basic methods required
+`PQBaseCamp.jl` is [Julia](https://julialang.org) package that encodes basic methods required
 by other [Paliquant](https://www.paliquant.com) packages. 
 
 ## Installation and Requirements
@@ -13,7 +13,8 @@ To use `PQBaseCamp.jl` in your projects, issue the command:
     julia> using PQBaseCamp
 
 ## Quick start guide
-`PQBaseCamp.jl` exports six functions for doing some basic computation on the financial data from [Polygon.io](https://polygon.io).
+`PQBaseCamp.jl` exports six functions for doing basic computation on the financial data. It is assumed
+the data is downloaded from [Polygon.io](https://polygon.io) using the [PQPolygonSDK.jl](https://github.com/Paliquant/PQPolygonSDK.jl) package. 
 
 ### Compute log or linear price returns
 The `Δ` function (and its associated methods) is used to compute either the log or simple (linear) return from price data encoded in a [DataFrame](https://dataframes.juliadata.org/stable/):
@@ -79,12 +80,22 @@ ticker symbols as keys pointing to return DataFrames. This method returns a [Dic
     key::Symbol = :Δ, base::String = "SPY") --> Array{Float64,1}
 ```
 
-The β(...) function returns an array
-of beta values (in the same order as the `tickers` array). The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional arguments `key` of type `Symbol` holds the column name for the return column in the `data` 
+The `β(...)` function returns an array
+of beta values (in the same order as the `tickers` array). The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional argument `key` of type `Symbol` holds the column name for the return column in the `data` 
 [DataFrame](https://dataframes.juliadata.org/stable/), and `base` denotes the ticker symbol for
 the market, taken to be [SPY](https://www.google.com/finance/quote/SPY:NYSEARCA?sa=X&ved=2ahUKEwj04c6Oiuv1AhVPmeAKHW-wBG4Q3ecFegQIERAU) by default.
 
+### Covariance
+The covariance function is a wrapper around the [cov](https://docs.julialang.org/en/v1/stdlib/Statistics/#Statistics.cov) function of the [Statistics.jl](https://github.com/JuliaLang/Statistics.jl) package in the standard library:
 
+```julia
+covariance(tickers::Array{String,1}, data::Dict{String,DataFrame}; 
+    key::Symbol = :Δ) --> Array{Float64,2}
+```
+
+The `covariance(...)` function returns the [covariance matrix](https://en.wikipedia.org/wiki/Covariance_matrix)
+in the same order as the `tickers` array. The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional argument `key` of type `Symbol` holds the column name for the return column in the `data` 
+[DataFrame](https://dataframes.juliadata.org/stable/).
 
 ## Disclaimer and Risks
 [Paliquant](https://www.paliquant.com) software and `PQBaseCamp.jl` is offered solely for training and  informational purposes. No offer or solicitation to buy or sell securities or securities derivative products of any kind, or any type of investment or trading advice or strategy,  is made, given or in any manner endorsed by [Paliquant](https://www.paliquant.com). 
