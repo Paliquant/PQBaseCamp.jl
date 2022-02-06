@@ -112,6 +112,16 @@ encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl
 The optional argument `number_of_strata` (default: 1) is used for [stratified sampling](https://en.wikipedia.org/wiki/Stratified_sampling); the `number_of_strata` denotes the number of subpopulations to construct. 
 The `sample(...)` uses the [antithetic variates method](https://en.wikipedia.org/wiki/Antithetic_variates) for variance reduction when generating samples.
 
+To sample a collection of return models can be done using:
+
+```julia
+sample(models::Dict{String,T}, number_of_steps::Int64; 
+    number_of_sample_paths = 100, number_of_strata = 1) --> Dict{String,Array{Float64,2}} where {T<:ContinuousUnivariateDistribution} 
+```
+
+where `models` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys that point to individual return probability models. The probability models 
+can be of any type of continuous univariate probability density function
+encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package.
 
 ## Disclaimer and Risks
 [Paliquant](https://www.paliquant.com) software and `PQBaseCamp.jl` is offered solely for training and  informational purposes. No offer or solicitation to buy or sell securities or securities derivative products of any kind, or any type of investment or trading advice or strategy,  is made, given or in any manner endorsed by [Paliquant](https://www.paliquant.com). 
