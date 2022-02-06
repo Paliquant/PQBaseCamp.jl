@@ -69,8 +69,9 @@ In cases where we have many assets that we are interested in, we export a broadc
     colkey::Symbol = :Δ) --> Dict{String, T} where {T<:ContinuousUnivariateDistribution}
 ```
 
-where `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) with 
-ticker symbols as keys pointing to return DataFrames. This method returns a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding the distribution models (ticker symbols as keys).
+The `𝒟(...)` method returns a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding the distribution models (ticker symbols as keys) where the input argument 
+`data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) with 
+ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). 
 
 ### Computing beta
 [Beta](https://www.investopedia.com/ask/answers/070615/what-formula-calculating-beta.asp) is a measure of the volatility of an asset or portfolio relative to the overall market. Beta is defined as the covariance between an asset's return and the market return, dived by the variance of the market return:
@@ -94,8 +95,23 @@ covariance(tickers::Array{String,1}, data::Dict{String,DataFrame};
 ```
 
 The `covariance(...)` function returns the [covariance matrix](https://en.wikipedia.org/wiki/Covariance_matrix)
-in the same order as the `tickers` array. The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional argument `key` of type `Symbol` holds the column name for the return column in the `data` 
+in the same order as the `tickers` array. The `tickers` array holds a list of ticker symbols, and `data` is a [Dict](https://docs.julialang.org/en/v1/base/collections/#Dictionaries) holding ticker symbols as keys pointing to return [DataFrames](https://dataframes.juliadata.org/stable/). The optional argument `key` of type `Symbol` holds the column name for the return data in the `data` 
 [DataFrame](https://dataframes.juliadata.org/stable/).
+
+### Sampling
+[Paliquant](https://www.paliquant.com) relies heavily on [Monte-Carlo methods](https://en.wikipedia.org/wiki/Monte_Carlo_method). A key component of [Monte-Carlo approaches](https://en.wikipedia.org/wiki/Monte_Carlo_method)
+is sampling:
+
+```julia
+sample(model::T, number_of_steps::Int64;
+    number_of_sample_paths = 100, number_of_strata = 1) --> Array{Float64,2} where {T<:ContinuousUnivariateDistribution}
+```
+
+The `sample(...)` function generates a `number_of_steps` by `2 * number_of_sample_paths` array of random draws from the `model`, where `model` is any type of continuous univariate probability density function
+encoded in the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package. 
+The optional argument `number_of_strata` (default: 1) is used for [stratified sampling](https://en.wikipedia.org/wiki/Stratified_sampling); the `number_of_strata` denotes the number of subpopulations to construct. 
+The `sample(...)` uses the [antithetic variates method](https://en.wikipedia.org/wiki/Antithetic_variates) for variance reduction when generating samples.
+
 
 ## Disclaimer and Risks
 [Paliquant](https://www.paliquant.com) software and `PQBaseCamp.jl` is offered solely for training and  informational purposes. No offer or solicitation to buy or sell securities or securities derivative products of any kind, or any type of investment or trading advice or strategy,  is made, given or in any manner endorsed by [Paliquant](https://www.paliquant.com). 
