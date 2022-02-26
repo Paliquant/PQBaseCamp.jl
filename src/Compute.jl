@@ -311,6 +311,41 @@ function β(tickers::Array{String,1}, data::Dict{String,DataFrame};
     return β_array
 end
 
+function sample(model::T, number_of_steps::Int64; 
+    number_of_sample_paths = 100)::Array{Array{Float64,2},1} where {T<:ContinuousMultivariateDistribution}
+    
+    # initialize -
+    number_of_steps = number_of_steps + 1
+    number_of_dimensions = length(model)
+    sample_return_data = Array{Array{Float64,2},1}(undef, number_of_dimensions)
+    
+    for time_step_index ∈ 1:number_of_steps
+
+        # initialize a row -
+        row_vector = Array{Float64,1}(undef, number_of_dimensions)
+
+        # compute the sample paths -
+        for sample_path_index ∈ 1:number_of_sample_paths
+        
+            # compute V* -
+            V₁ = rand(number_of_dimensions)
+            V₂ = 1 .- V₁
+
+            # compute the quantile for these V's -
+            q₁ = quantile(rand(model), V₁)
+            q₂ = quantile(rand(model), V₂)
+        
+            
+
+        end
+
+    end
+
+
+    # return -
+    return sample_return_data
+end
+
 function sample(model::T, number_of_steps::Int64;
     number_of_sample_paths = 100, number_of_strata = 1)::Array{Float64,2} where {T<:ContinuousUnivariateDistribution} 
 
@@ -329,9 +364,12 @@ function sample(model::T, number_of_steps::Int64;
             # compute a number_of_sample_paths draws from tis strata?
             for _ ∈ 1:number_of_sample_paths
                 
+                # role a random number -
+                r = rand()
+
                 # compute V -
-                V₁ = (strata_index - 1)/number_of_strata + rand()/number_of_strata
-                V₂ = (strata_index - 1)/number_of_strata + (1-rand())/number_of_strata
+                V₁ = (strata_index - 1)/number_of_strata + r/number_of_strata
+                V₂ = (strata_index - 1)/number_of_strata + (1 - r)/number_of_strata
 
                 # compute the quantile for this V -
                 q₁ = quantile(model, V₁)
