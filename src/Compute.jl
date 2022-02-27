@@ -317,30 +317,16 @@ function sample(model::T, number_of_steps::Int64;
     # initialize -
     number_of_steps = number_of_steps + 1
     number_of_dimensions = length(model)
-    sample_return_data = Array{Array{Float64,2},1}(undef, number_of_dimensions)
+    sample_return_data = Array{Array{Float64,2},1}(undef, number_of_steps)
     
     for time_step_index ∈ 1:number_of_steps
 
-        # initialize a row -
-        row_vector = Array{Float64,1}(undef, number_of_dimensions)
-
-        # compute the sample paths -
-        for sample_path_index ∈ 1:number_of_sample_paths
+        # generate a random block -
+        B = rand(model, number_of_sample_paths)
         
-            # compute V* -
-            V₁ = rand(number_of_dimensions)
-            V₂ = 1 .- V₁
-
-            # compute the quantile for these V's -
-            q₁ = quantile(rand(model), V₁)
-            q₂ = quantile(rand(model), V₂)
-        
-            
-
-        end
-
+        # capture -
+        sample_return_data[time_step_index] = B
     end
-
 
     # return -
     return sample_return_data
